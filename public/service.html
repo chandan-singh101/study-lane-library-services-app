@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Lane Library - Service Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #223462 0%, #0593FE 100%);
+            color: #707070;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 20px 30px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #FFB92C 0%, #0593FE 100%);
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .library-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .library-icon {
+            color: #FFB92C;
+            font-size: 36px;
+            margin-bottom: 5px;
+        }
+        
+        .library-name {
+            color: #223462;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .cart-icon {
+            position: relative;
+            background-color: #FFB92C;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #223462;
+            font-size: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 12px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .user-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .user-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #0593FE;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .user-name {
+            color: #223462;
+            font-weight: 600;
+            font-size: 14px;
+            max-width: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .welcome-banner {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .welcome-message {
+            color: #223462;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .services-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .service-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #FFB92C 0%, #0593FE 100%);
+        }
+        
+        .service-icon {
+            color: #0593FE;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        
+        .service-title {
+            color: #223462;
+            font-size: 22px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .service-description {
+            color: #707070;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .service-btn {
+            background-color: #FFB92C;
+            color: #223462;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+        
+        .service-btn:hover {
+            background-color: #f0a91a;
+        }
+        
+        .service-option {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid #0593FE;
+        }
+        
+        .service-option:hover {
+            background-color: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .service-option-title {
+            font-weight: 600;
+            color: #223462;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .service-option-desc {
+            font-size: 14px;
+            color: #707070;
+        }
+        
+        .item-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #0593FE;
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .quantity-value {
+            margin: 0 10px;
+            font-weight: 600;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        .back-to-services {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .back-to-services:hover {
+            background-color: #5a6268;
+        }
+        
+        .print-file-input {
+            display: none;
+        }
+        
+        .print-file-list {
+            margin-top: 15px;
+        }
+        
+        .print-file-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        footer {
+            text-align: center;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: #0593FE;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        /* QR Code Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .modal-title {
+            color: #223462;
+            margin-bottom: 20px;
+        }
+        
+        #qrcode {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #707070;
+            cursor: pointer;
+        }
+        
+        .modal-close:hover {
+            color: #223462;
+        }
+        
+        .modal-btn {
+            background-color: #0593FE;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        
+        .modal-btn:hover {
+            background-color: #0480d4;
+        }
+        
+        /* User Profile Modal */
+        .user-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .user-modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 300px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .user-details {
+            margin-bottom: 20px;
+        }
+        
+        .user-detail {
+            margin-bottom: 10px;
+            color: #223462;
+        }
+        
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Feedback Modal */
+        .feedback-modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: left;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .feedback-form {
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #223462;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .form-group textarea:focus {
+            border-color: #0593FE;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(5, 147, 254, 0.2);
+        }
+        
+        .submit-feedback-btn {
+            background-color: #0593FE;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .submit-feedback-btn:hover {
+            background-color: #0480d4;
+        }
+        
+        /* Cart Modal */
+        .cart-modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: left;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+            align-items: center;
+        }
+        
+        .cart-item-info {
+            flex: 1;
+        }
+        
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-item-price {
+            margin: 0 15px;
+            font-weight: 600;
+            color: #223462;
+        }
+        
+        .cart-total {
+            font-weight: 700;
+            font-size: 18px;
+            text-align: right;
+            margin-top: 15px;
+            color: #223462;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-left, .header-right {
+                width: 100%;
+                align-items: center;
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .header-right {
+                margin-top: 15px;
+            }
+            
+            .library-info {
+                align-items: center;
+                margin-bottom: 15px;
+            }
+            
+            .services-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .library-name {
+                font-size: 24px;
+            }
+            
+            .welcome-message {
+                font-size: 16px;
+            }
+            
+            .service-card {
+                padding: 20px;
+            }
+            
+            .service-title {
+                font-size: 20px;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .cart-item-controls {
+                margin-top: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .header-right {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <div class="library-info">
+                    <div class="library-icon">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <h1 class="library-name">Study Lane Library</h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="cart-icon" id="cartIcon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <div class="user-profile" id="userProfile">
+                    <div class="user-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-name" id="userName">Guest</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="welcome-banner">
+            <div class="welcome-message" id="welcomeMessage">Welcome back, Guest!</div>
+        </div>
+        
+        <div class="services-container">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <h2 class="service-title">Library Services</h2>
+                <p class="service-description">Select from our available services to enhance your study experience. We offer beverages, stationery, and printing services delivered right to your seat.</p>
+                
+                <div id="servicesList">
+                    <div class="service-option" data-service="beverage">
+                        <div class="service-option-title">
+                            <span><i class="fas fa-coffee"></i> Tea/Coffee Service</span>
+                            <span>Starting at ₹10</span>
+                        </div>
+                        <div class="service-option-desc">Order hot beverages delivered to your seat. Perfect for long study sessions.</div>
+                    </div>
+                    
+                    <div class="service-option" data-service="stationary">
+                        <div class="service-option-title">
+                            <span><i class="fas fa-pencil-alt"></i> Stationary Service</span>
+                            <span>Starting at ₹5</span>
+                        </div>
+                        <div class="service-option-desc">Get writing materials and paper. Never run out of supplies during your study time.</div>
+                    </div>
+                    
+                    <div class="service-option" data-service="printer">
+                        <div class="service-option-title">
+                            <span><i class="fas fa-print"></i> Printer Service</span>
+                            <span>₹1 per page</span>
+                        </div>
+                        <div class="service-option-desc">Print your documents with our high-quality printers. Multiple file formats supported.</div>
+                    </div>
+                </div>
+                
+                <div id="serviceDetail" style="display: none;">
+                    <!-- This will be populated dynamically based on service selection -->
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Study Lane Library &copy; 2023. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+                <a href="#" id="feedbackLink">Feedback</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="cart-modal-content">
+            <button class="modal-close" onclick="closeCartModal()">&times;</button>
+            <h2 class="modal-title">Your Cart</h2>
+            <div id="cartItems"></div>
+            <div class="cart-total">Total: ₹<span id="cartTotal">0.00</span></div>
+            <button class="service-btn" id="placeOrderBtn" style="margin-top: 20px;">Place Order</button>
+            <button class="back-button" id="continueShoppingBtn" style="margin-top: 10px;">Continue Shopping</button>
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2 class="modal-title">Scan to Pay</h2>
+            <p>Scan this QR code with your UPI app to complete your payment</p>
+            <div id="qrcode"></div>
+            <p>Total Amount: ₹<span id="modalTotal">0.00</span></p>
+            <p>UPI ID: himanshusinghrajput7866-1@okhdfcbank</p>
+            <button class="modal-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div class="user-modal" id="userModal">
+        <div class="user-modal-content">
+            <button class="modal-close" onclick="closeUserModal()">&times;</button>
+            <h2 class="modal-title">User Profile</h2>
+            <div class="user-details">
+                <div class="user-detail" id="profileUserName">Name: Guest</div>
+                <div class="user-detail" id="profileSeatInfo">Seat: Not assigned</div>
+            </div>
+            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal" id="feedbackModal">
+        <div class="feedback-modal-content">
+            <button class="modal-close" onclick="closeFeedbackModal()">&times;</button>
+            <h2 class="modal-title">Feedback</h2>
+            <p class="service-description">We value your opinion. Please share your experience or suggestions to help us improve our services. Your feedback helps us serve you better.</p>
+            
+            <form class="feedback-form" id="feedbackForm">
+                <div class="form-group">
+                    <label for="feedback">Your Feedback:</label>
+                    <textarea id="feedback" name="feedback" placeholder="Please share your thoughts about our library services..." required></textarea>
+                </div>
+                <button type="submit" class="submit-feedback-btn">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Service data with prices in Rupees
+        const services = {
+            beverage: [
+                { name: 'Tea', price: 10 },
+                { name: 'Coffee', price: 20 }
+            ],
+            stationary: [
+                { name: 'Pen', price: 15 },
+                { name: 'Paper (per sheet)', price: 2 }
+            ],
+            printer: [
+                { name: 'Print Document', price: 1 } // per page
+            ]
+        };
+        
+        // Cart to store selected items
+        let cart = [];
+        let printedFiles = [];
+        
+        // Check if user is logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            const userName = sessionStorage.getItem('userName');
+            const userSeat = sessionStorage.getItem('userSeat');
+            
+            if (!userName || !userSeat) {
+                alert('Please login first');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Display user information
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${userName}!`;
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('profileUserName').textContent = `Name: ${userName}`;
+            document.getElementById('profileSeatInfo').textContent = `Seat: ${userSeat}`;
+            
+            // Set up event listeners
+            setupEventListeners();
+        });
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Service option clicks
+            document.querySelectorAll('.service-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const serviceType = this.getAttribute('data-service');
+                    showServiceDetail(serviceType);
+                });
+            });
+            
+            // Cart icon click
+            document.getElementById('cartIcon').addEventListener('click', function() {
+                showCartModal();
+            });
+            
+            // Place order button
+            document.getElementById('placeOrderBtn').addEventListener('click', function() {
+                if (cart.length === 0) {
+                    alert('Your cart is empty!');
+                    return;
+                }
+                proceedToPayment();
+            });
+            
+            // Continue shopping button
+            document.getElementById('continueShoppingBtn').addEventListener('click', function() {
+                closeCartModal();
+            });
+            
+            // User profile click
+            document.getElementById('userProfile').addEventListener('click', function() {
+                document.getElementById('userModal').style.display = 'flex';
+            });
+            
+            // Feedback link click
+            document.getElementById('feedbackLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('feedbackModal').style.display = 'flex';
+            });
+            
+            // Feedback form submission
+            document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const feedbackText = document.getElementById('feedback').value;
+                const userName = sessionStorage.getItem('userName');
+                const userSeat = sessionStorage.getItem('userSeat');
+                
+                // Send feedback to server
+                fetch('/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: userName,
+                        seat: userSeat,
+                        feedback: feedbackText
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Thank you for your feedback! We appreciate your input.');
+                        document.getElementById('feedback').value = '';
+                        closeFeedbackModal();
+                    } else {
+                        alert('Error submitting feedback. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error submitting feedback. Please try again.');
+                });
+            });
+        }
+        
+        // Show service detail view
+        function showServiceDetail(serviceType) {
+            // Hide services list
+            document.getElementById('servicesList').style.display = 'none';
+            
+            // Generate service detail HTML
+            let detailHTML = `<h3>${serviceType.charAt(0).toUpperCase() + serviceType.slice(1)} Service</h3>`;
+            
+            if (serviceType === 'printer') {
+                // Special handling for printer service
+                detailHTML += `
+                    <p>Select documents to print (₹1 per page)</p>
+                    <input type="file" id="printFileInput" class="print-file-input" multiple accept=".pdf,.doc,.docx,.txt">
+                    <button class="service-btn" id="selectPrintFileBtn" style="margin-top: 15px;">
+                        <i class="fas fa-file-upload"></i> Select Documents to Print
+                    </button>
+                    <div id="printFileList" class="print-file-list"></div>
+                `;
+            } else {
+                // For beverage and stationary services
+                services[serviceType].forEach(item => {
+                    detailHTML += `
+                        <div class="service-option">
+                            <div class="service-option-title">
+                                <span>${item.name}</span>
+                                <span>₹${item.price}</span>
+                            </div>
+                            <div class="item-controls" data-item="${item.name}" data-price="${item.price}">
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn decrease-btn">-</button>
+                                    <span class="quantity-value">0</span>
+                                    <button class="quantity-btn increase-btn">+</button>
+                                </div>
+                                <button class="service-btn add-to-cart-btn" style="width: auto; padding: 5px 10px;">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Add back button
+            detailHTML += `<button class="back-to-services" id="backToServices" style="display: block; margin-top: 20px;">Go back to services</button>`;
+            
+            // Update the detail view
+            document.getElementById('serviceDetail').innerHTML = detailHTML;
+            document.getElementById('serviceDetail').style.display = 'block';
+            
+            // Set up event listeners for the dynamic content
+            if (serviceType === 'printer') {
+                document.getElementById('selectPrintFileBtn').addEventListener('click', function() {
+                    document.getElementById('printFileInput').click();
+                });
+                
+                document.getElementById('printFileInput').addEventListener('change', function(e) {
+                    handlePrintFileSelection(e.target.files);
+                });
+            } else {
+                // Set up quantity controls
+                document.querySelectorAll('.increase-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const valueElement = this.parentElement.querySelector('.quantity-value');
+                        valueElement.textContent = parseInt(valueElement.textContent) + 1;
+                    });
+                });
+                
+                document.querySelectorAll('.decrease-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const valueElement = this.parentElement.querySelector('.quantity-value');
+                        const currentValue = parseInt(valueElement.textContent);
+                        if (currentValue > 0) {
+                            valueElement.textContent = currentValue - 1;
+                        }
+                    });
+                });
+                
+                // Set up add to cart buttons
+                document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const controls = this.parentElement;
+                        const itemName = controls.getAttribute('data-item');
+                        const itemPrice = parseFloat(controls.getAttribute('data-price'));
+                        const quantity = parseInt(controls.querySelector('.quantity-value').textContent);
+                        
+                        if (quantity > 0) {
+                            addToCart(itemName, itemPrice, quantity);
+                            controls.querySelector('.quantity-value').textContent = '0';
+                            alert(`${quantity} ${itemName}(s) added to cart!`);
+                        }
+                    });
+                });
+            }
+            
+            // Back to services button
+            document.getElementById('backToServices').addEventListener('click', function() {
+                document.getElementById('serviceDetail').style.display = 'none';
+                document.getElementById('servicesList').style.display = 'block';
+            });
+            
+            // Show item controls on service option click
+            if (serviceType !== 'printer') {
+                document.querySelectorAll('.service-option').forEach(option => {
+                    option.addEventListener('click', function(e) {
+                        if (!e.target.closest('.item-controls')) {
+                            const controls = this.querySelector('.item-controls');
+                            controls.style.display = controls.style.display === 'flex' ? 'none' : 'flex';
+                        }
+                    });
+                });
+            }
+        }
+        
+        // Handle print file selection
+        function handlePrintFileSelection(files) {
+            if (files.length > 0) {
+                const fileList = document.getElementById('printFileList');
+                fileList.innerHTML = '';
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    printedFiles.push(file);
+                    
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'print-file-item';
+                    fileItem.innerHTML = `
+                        <span>${file.name}</span>
+                        <span>${(file.size / 1024).toFixed(2)} KB</span>
+                    `;
+                    fileList.appendChild(fileItem);
+                    
+                    // Add to cart (assuming 1 page per file for simplicity)
+                    addToCart('Print Document', 1, 1, file.name);
+                }
+                
+                alert(`${files.length} document(s) added for printing!`);
+            }
+        }
+        
+        // Add item to cart
+        function addToCart(name, price, quantity, details = '') {
+            // Check if item already exists in cart
+            const existingItemIndex = cart.findIndex(item => 
+                item.name === name && item.details === details
+            );
+            
+            if (existingItemIndex > -1) {
+                // Update quantity if item exists
+                cart[existingItemIndex].quantity += quantity;
+            } else {
+                // Add new item to cart
+                cart.push({
+                    name,
+                    price,
+                    quantity,
+                    details
+                });
+            }
+            
+            // Update cart count
+            updateCartCount();
+        }
+        
+        // Update cart count badge
+        function updateCartCount() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+        }
+        
+        // Show cart modal
+        function showCartModal() {
+            // Populate cart items
+            const cartItemsElement = document.getElementById('cartItems');
+            cartItemsElement.innerHTML = '';
+            
+            let total = 0;
+            
+            if (cart.length === 0) {
+                cartItemsElement.innerHTML = '<p>Your cart is empty</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+                    
+                    const cartItemElement = document.createElement('div');
+                    cartItemElement.className = 'cart-item';
+                    cartItemElement.innerHTML = `
+                        <div class="cart-item-info">
+                            <strong>${item.name}</strong>
+                            ${item.details ? `<div>${item.details}</div>` : ''}
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="quantity-btn decrease-cart-btn" data-index="${index}">-</button>
+                            <span class="cart-item-price">${item.quantity} × ₹${item.price} = ₹${itemTotal}</span>
+                            <button class="quantity-btn increase-cart-btn" data-index="${index}">+</button>
+                        </div>
+                    `;
+                    cartItemsElement.appendChild(cartItemElement);
+                });
+                
+                // Add event listeners to quantity buttons
+                document.querySelectorAll('.increase-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        cart[index].quantity += 1;
+                        showCartModal(); // Refresh cart view
+                    });
+                });
+                
+                document.querySelectorAll('.decrease-cart-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        if (cart[index].quantity > 1) {
+                            cart[index].quantity -= 1;
+                        } else {
+                            cart.splice(index, 1);
+                        }
+                        showCartModal(); // Refresh cart view
+                    });
+                });
+            }
+            
+            // Update total
+            document.getElementById('cartTotal').textContent = total.toFixed(2);
+            
+            // Update cart count
+            updateCartCount();
+            
+            // Show modal
+            document.getElementById('cartModal').style.display = 'flex';
+        }
+        
+        // Close cart modal
+        function closeCartModal() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+        
+        // Proceed to payment
+        function proceedToPayment() {
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const userName = sessionStorage.getItem('userName');
+            const userSeat = sessionStorage.getItem('userSeat');
+            const userPhone = sessionStorage.getItem('userPhone');
+            
+            if (total === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            // Convert cart to JSON string for passing to payment page
+            const cartJSON = JSON.stringify(cart);
+            
+            // Redirect to payment page with parameters
+            window.location.href = `payment.html?amount=${total}&name=${userName}&seat=${userSeat}&phone=${userPhone}&cart=${encodeURIComponent(cartJSON)}`;
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+        
+        // Close user modal
+        function closeUserModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+        
+        // Close feedback modal
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'none';
+        }
+        
+        // Logout function
+        function logout() {
+            if(confirm('Are you sure you want to logout?')) {
+                sessionStorage.removeItem('userName');
+                sessionStorage.removeItem('userSeat');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+</html>

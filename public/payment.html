@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Lane Library - Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Your CSS remains the same */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #223462 0%, #0593FE 100%);
+            color: #707070;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .payment-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .payment-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #FFB92C 0%, #0593FE 100%);
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .library-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .library-icon {
+            color: #FFB92C;
+            font-size: 36px;
+            margin-right: 15px;
+        }
+        
+        .library-name {
+            color: #223462;
+            font-size: 28px;
+            font-weight: 800;
+        }
+        
+        .payment-details {
+            margin-bottom: 25px;
+        }
+        
+        .payment-title {
+            color: #223462;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .payment-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: #223462;
+            margin-bottom: 10px;
+        }
+        
+        .payment-description {
+            color: #707070;
+            margin-bottom: 20px;
+        }
+        
+        .pay-button {
+            background-color: #FFB92C;
+            color: #223462;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .pay-button:hover {
+            background-color: #f0a91a;
+        }
+        
+        .alternative-payment {
+            margin-top: 20px;
+            display: none; /* Hide UPI option as requested */
+        }
+        
+        .upi-button {
+            background-color: #0593FE;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+        
+        .upi-button:hover {
+            background-color: #0480d4;
+        }
+        
+        .back-button {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+        
+        .payment-status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .processing {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #0593FE;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0593FE;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            border-radius: 4px;
+        }
+        
+        .info-title {
+            font-weight: bold;
+            color: #223462;
+            margin-bottom: 8px;
+        }
+        
+        .user-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .user-detail {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .user-label {
+            font-weight: 600;
+            color: #223462;
+        }
+        
+        .user-value {
+            color: #707070;
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="library-header">
+            <div class="library-icon">
+                <i class="fas fa-book-reader"></i>
+            </div>
+            <h1 class="library-name">Study Lane Library</h1>
+        </div>
+        
+        <div class="payment-details">
+            <h2 class="payment-title">Payment Gateway</h2>
+            <div class="payment-amount">₹ <span id="paymentAmount">0.00</span></div>
+            <p class="payment-description">Complete your payment for library services</p>
+        </div>
+        
+        <div class="user-details">
+            <h3>User Information</h3>
+            <div class="user-detail">
+                <span class="user-label">Name:</span>
+                <span class="user-value" id="userName">Loading...</span>
+            </div>
+            <div class="user-detail">
+                <span class="user-label">Seat:</span>
+                <span class="user-value" id="userSeat">Loading...</span>
+            </div>
+            <div class="user-detail">
+                <span class="user-label">Phone:</span>
+                <span class="user-value" id="userPhone">Loading...</span>
+            </div>
+        </div>
+        
+        <div class="processing" id="processing">
+            <div class="spinner"></div>
+            <p>Processing your payment...</p>
+        </div>
+        
+        <div id="paymentStatus" class="payment-status"></div>
+        
+        <div class="info-box">
+            <div class="info-title">Payment Information</div>
+            <p>Your payment is being processed securely by Razorpay. You'll be redirected to the payment gateway shortly.</p>
+        </div>
+        
+        <button class="back-button" id="backButton" style="display: none;">Back to Services</button>
+    </div>
+
+    <script>
+        // Get parameters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const amount = urlParams.get('amount');
+        const userName = urlParams.get('name');
+        const userSeat = urlParams.get('seat');
+        const userPhone = urlParams.get('phone'); // Get phone from URL
+        const cartData = urlParams.get('cart');
+        
+        // Display user information
+        document.getElementById('userName').textContent = userName || "Guest";
+        document.getElementById('userSeat').textContent = userSeat || "Not assigned";
+        document.getElementById('userPhone').textContent = userPhone || "Not provided";
+        
+        // Set payment amount
+        document.getElementById('paymentAmount').textContent = amount ? parseFloat(amount).toFixed(2) : '0.00';
+        
+        // Function to record payment in database
+        function recordPayment(paymentData) {
+            // This would typically be done with a server-side API call
+            console.log("Recording payment:", paymentData);
+            
+            // In a real implementation, you would send this data to your server
+            // which would then store it in your database
+            fetch('/api/record-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(paymentData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Payment recorded:", data);
+            })
+            .catch(error => {
+                console.error("Error recording payment:", error);
+            });
+        }
+        
+        // Razorpay options with UPI enhancements
+        const options = {
+            "key": "rzp_test_RAk5UJb0IvStj9", // Replace with your Razorpay Key ID
+            "amount": amount ? (parseFloat(amount) * 100).toString() : "0", // Amount in paise
+            "currency": "INR",
+            "name": "Study Lane Library",
+            "description": "Library Services Payment",
+            "image": "https://example.com/your_logo", // Add your logo URL
+            "handler": function (response) {
+                // This function will be called after successful payment
+                document.getElementById('processing').style.display = 'none';
+                document.getElementById('paymentStatus').textContent = "Payment successful! Payment ID: " + response.razorpay_payment_id;
+                document.getElementById('paymentStatus').className = "payment-status success";
+                document.getElementById('paymentStatus').style.display = "block";
+                document.getElementById('backButton').style.display = "block";
+                
+                // Record payment in database
+                const paymentData = {
+                    payment_id: response.razorpay_payment_id,
+                    amount: amount,
+                    currency: "INR",
+                    status: "success",
+                    user_name: userName || "Guest",
+                    user_email: "",
+                    user_phone: userPhone || "",
+                    seat: userSeat || "Not assigned",
+                    cart: cartData || "No items",
+                    timestamp: new Date().toISOString()
+                };
+                
+                recordPayment(paymentData);
+                
+                // Redirect to success page after a delay
+                setTimeout(function() {
+                    window.location.href = "service.html?payment=success&id=" + response.razorpay_payment_id;
+                }, 3000);
+            },
+            "prefill": {
+                "name": userName || "Guest",
+                "email": "",
+                "contact": userPhone || "" // Use the phone from URL parameter
+            },
+            "notes": {
+                "seat": userSeat || "Not assigned",
+                "cart": cartData || "No items"
+            },
+            "theme": {
+                "color": "#0593FE"
+            },
+            "method": {
+                "netbanking": true,
+                "card": true,
+                "wallet": true,
+                "upi": true
+            },
+            "modal": {
+                "ondismiss": function() {
+                    // Handle modal dismissal
+                    document.getElementById('processing').style.display = 'none';
+                    document.getElementById('paymentStatus').textContent = "Payment was cancelled. Please try again.";
+                    document.getElementById('paymentStatus').className = "payment-status error";
+                    document.getElementById('paymentStatus').style.display = "block";
+                    document.getElementById('backButton').style.display = "block";
+                    
+                    // Record failed payment in database
+                    const paymentData = {
+                        payment_id: "cancelled_" + Date.now(),
+                        amount: amount,
+                        currency: "INR",
+                        status: "cancelled",
+                        user_name: userName || "Guest",
+                        user_email: "",
+                        user_phone: userPhone || "",
+                        seat: userSeat || "Not assigned",
+                        cart: cartData || "No items",
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    recordPayment(paymentData);
+                }
+            }
+        };
+        
+        // Initialize Razorpay
+        const rzp = new Razorpay(options);
+        
+        // Automatically open Razorpay modal when page loads (simulating "Place Order")
+        window.onload = function() {
+            document.getElementById('processing').style.display = 'flex';
+            setTimeout(function() {
+                rzp.open();
+            }, 1000);
+        };
+        
+        // Handle payment errors
+        rzp.on('payment.failed', function (response) {
+            document.getElementById('processing').style.display = 'none';
+            document.getElementById('paymentStatus').textContent = "Payment failed. Error: " + response.error.description;
+            document.getElementById('paymentStatus').className = "payment-status error";
+            document.getElementById('paymentStatus').style.display = "block";
+            document.getElementById('backButton').style.display = "block";
+            
+            // Record failed payment in database
+            const paymentData = {
+                payment_id: response.error.metadata.payment_id || "failed_" + Date.now(),
+                amount: amount,
+                currency: "INR",
+                status: "failed",
+                user_name: userName || "Guest",
+                user_email: "",
+                user_phone: userPhone || "",
+                seat: userSeat || "Not assigned",
+                cart: cartData || "No items",
+                timestamp: new Date().toISOString(),
+                error: response.error.description
+            };
+            
+            recordPayment(paymentData);
+        });
+        
+        // Handle back button
+        document.getElementById('backButton').addEventListener('click', function() {
+            window.location.href = "service.html";
+        });
+    </script>
+</body>
+</html>
