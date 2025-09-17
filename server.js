@@ -1,9 +1,7 @@
-
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
-// require('dotenv').config();
 
 const app = express();
 const port = 3000;
@@ -14,25 +12,17 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // PostgreSQL connection pool
-// const pool = new Pool({
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-//   port: process.env.DB_PORT,
-//   // For local development, we don't need SSL
-// });
-
 const pool = new Pool({
   connectionString: "postgresql://postgres.ykqrfpbkxnnohffjdbdt:Chandan1@singh@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres",
   ssl: {
     rejectUnauthorized: false, // required for Supabase
   },
 });
+
 // Function to check and create tables if they don't exist
 async function initializeDatabase() {
   try {
-    // Check if users table exists
+    // Users table
     const usersTableCheck = await pool.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
@@ -53,17 +43,16 @@ async function initializeDatabase() {
       `);
       console.log('Users table created successfully');
       pool.query(
-      `INSERT INTO users (name, phone)
-       VALUES 
-         ('chandan singh', '9999999999'),
-         ('gaurav yadav', '8888888888')
-       ON CONFLICT (phone) DO NOTHING`
-    );
-
-    console.log("✅ Users table ready and default users inserted");
+        `INSERT INTO users (name, phone)
+         VALUES 
+           ('chandan singh', '9999999999'),
+           ('gaurav yadav', '8888888888')
+         ON CONFLICT (phone) DO NOTHING`
+      );
+      console.log("✅ Users table ready and default users inserted");
     }
 
-    // Check if feedback table exists
+    // Feedback table
     const feedbackTableCheck = await pool.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
@@ -86,7 +75,7 @@ async function initializeDatabase() {
       console.log('Feedback table created successfully');
     }
 
-    // Check if orders table exists
+    // Orders table
     const ordersTableCheck = await pool.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
@@ -101,20 +90,69 @@ async function initializeDatabase() {
         CREATE TABLE orders (
           id SERIAL PRIMARY KEY,
           payment_id VARCHAR(100),
+          razorpay_order_id VARCHAR(100),
           amount NUMERIC(10, 2) NOT NULL,
           currency VARCHAR(10) DEFAULT 'INR',
           status VARCHAR(50) NOT NULL,
           user_name VARCHAR(100) NOT NULL,
           user_phone VARCHAR(20) NOT NULL,
-          seat VARCHAR(20),
-          cart JSONB NOT NULL,
-          error TEXT,
+          seat_number VARCHAR(20),
+          items JSONB NOT NULL,
           delivery_status VARCHAR(20) DEFAULT 'pending',
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          delivery_notes TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
       `);
       console.log('Orders table created successfully');
     }
+
+    // Complaints table
+const complaintsTableCheck = await pool.query(`
+  SELECT EXISTS (
+    SELECT FROM information_schema.tables 
+    WHERE table_schema = 'public' 
+    AND table_name = 'complaints'
+  );
+`);
+
+if (!complaintsTableCheck.rows[0].exists) {
+  console.log('Creating complaints table...');
+  await pool.query(`
+    CREATE TABLE complaints (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      seat VARCHAR(20),
+      type VARCHAR(50) NOT NULL,
+      details TEXT NOT NULL,
+      submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+  console.log('Complaints table created successfully');
+}
+
+// Contacts table (for contact form)
+const contactsTableCheck = await pool.query(`
+  SELECT EXISTS (
+    SELECT FROM information_schema.tables 
+    WHERE table_schema = 'public' 
+    AND table_name = 'contacts'
+  );
+`);
+
+if (!contactsTableCheck.rows[0].exists) {
+  console.log('Creating contacts table...');
+  await pool.query(`
+    CREATE TABLE contacts (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      phone VARCHAR(20) NOT NULL,
+      message TEXT NOT NULL,
+      submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+  console.log('Contacts table created successfully');
+}
 
     console.log('Database initialization completed');
   } catch (error) {
@@ -144,21 +182,20 @@ async function startServer() {
   }
 }
 
+// ================= ROUTES =================
+
 // Login endpoint
 app.post('/login', async (req, res) => {
   const { name, phone } = req.body;
 
   try {
-    // Fetch user by phone only
     const query = 'SELECT * FROM users WHERE phone = $1';
     const values = [phone];
-    
     const result = await pool.query(query, values);
 
     if (result.rows.length > 0) {
       const dbUser = result.rows[0];
 
-      // Compare names ignoring case
       if (dbUser.name.toLowerCase() === name.toLowerCase()) {
         res.json({ success: true, message: 'Login successful' });
       } else {
@@ -178,12 +215,10 @@ app.post('/feedback', async (req, res) => {
   const { name, seat, feedback } = req.body;
 
   try {
-    // Insert feedback into database
     const query = 'INSERT INTO feedback (name, seat, feedback, submitted_at) VALUES ($1, $2, $3, NOW())';
     const values = [name, seat, feedback];
-    
     await pool.query(query, values);
-    
+
     res.json({ success: true, message: 'Feedback submitted successfully' });
   } catch (error) {
     console.error('Database error:', error);
@@ -193,17 +228,112 @@ app.post('/feedback', async (req, res) => {
 
 // Serve HTML files
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.get('/service', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'service.html'));
 });
 
-// Order recording endpoint
+// Get all services with their items
+app.get('/api/services', async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        s.id, s.name, s.description, s.icon,
+        si.id as item_id, si.name as item_name, si.price, si.description as item_description
+      FROM services s
+      LEFT JOIN service_items si ON s.id = si.service_id
+      ORDER BY s.id, si.id
+    `;
+    
+    const result = await pool.query(query);
+
+    // Group services and their items
+    const services = [];
+    let currentService = null;
+    
+    result.rows.forEach(row => {
+      if (!currentService || currentService.id !== row.id) {
+        if (currentService) services.push(currentService);
+        
+        currentService = {
+          id: row.id,
+          name: row.name,
+          description: row.description,
+          icon: row.icon,
+          items: []
+        };
+      }
+      
+      if (row.item_id) {
+        currentService.items.push({
+          id: row.item_id,
+          name: row.item_name,
+          price: row.price,
+          description: row.item_description
+        });
+      }
+    });
+    
+    if (currentService) services.push(currentService);
+    
+    res.json(services);
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ success: false, message: 'Error fetching services' });
+  }
+});
+
+// Submit contact form
+app.post('/api/contact', async (req, res) => {
+  const { name, phone, message } = req.body;
+
+  try {
+    const query = 'INSERT INTO contacts (name, phone, message, submitted_at) VALUES ($1, $2, $3, NOW())';
+    const values = [name, phone, message];
+    await pool.query(query, values);
+    
+    res.json({ success: true, message: 'Contact form submitted successfully' });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ success: false, message: 'Error submitting contact form' });
+  }
+});
+
+// Submit complaint
+// app.post('/api/complaint', async (req, res) => {
+//   const { name, type, details } = req.body;
+
+//   try {
+//     const query = 'INSERT INTO complaints (name, seat, type, details, submitted_at) VALUES ($1, $2, $3, $4, NOW())';
+// const values = [name, seat || null, type, details];
+//     await pool.query(query, values);
+    
+//     res.json({ success: true, message: 'Complaint submitted successfully' });
+//   } catch (error) {
+//     console.error('Database error:', error);
+//     res.status(500).json({ success: false, message: 'Error submitting complaint' });
+//   }
+// });
+// Submit complaint
+app.post('/complaint', async (req, res) => {
+  const { name, seat, type, details } = req.body;  // ✅ include seat here
+
+  try {
+    const query = 'INSERT INTO complaints (name, seat, type, details, submitted_at) VALUES ($1, $2, $3, $4, NOW())';
+    const values = [name, seat || null, type, details];
+    await pool.query(query, values);
+
+    res.json({ success: true, message: 'Complaint submitted successfully' });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ success: false, message: 'Error submitting complaint' });
+  }
+});
+
+
+// ✅ Final order recording endpoint (keep this one)
 app.post('/api/record-payment', async (req, res) => {
   const {
     payment_id,
+    razorpay_order_id,
     amount,
     currency,
     status,
@@ -215,23 +345,22 @@ app.post('/api/record-payment', async (req, res) => {
   } = req.body;
 
   try {
-    // Insert order into database
     const query = `
-      INSERT INTO orders (payment_id, amount, currency, status, user_name, user_phone, seat, cart, error)
+      INSERT INTO orders (payment_id, razorpay_order_id, amount, currency, status, user_name, user_phone, seat_number, items)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       RETURNING *
     `;
     
     const values = [
       payment_id,
+      razorpay_order_id,
       amount,
       currency || 'INR',
       status,
       user_name,
       user_phone,
       seat,
-      JSON.stringify(cart),
-      error || null
+      JSON.stringify(cart)
     ];
     
     const result = await pool.query(query, values);
@@ -250,44 +379,19 @@ app.post('/api/record-payment', async (req, res) => {
   }
 });
 
-// Get all orders
-app.get('/api/orders', async (req, res) => {
-  try {
-    const { status } = req.query;
-    
-    let query = 'SELECT * FROM orders';
-    let values = [];
-    
-    if (status && status !== 'all') {
-      query += ' WHERE delivery_status = $1';
-      values = [status];
-    }
-    
-    query += ' ORDER BY created_at DESC';
-    
-    const result = await pool.query(query, values);
-    
-    res.json({ 
-      success: true, 
-      orders: result.rows 
-    });
-  } catch (error) {
-    console.error('Database error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Error fetching orders' 
-    });
-  }
-});
-
-// Update order status
-app.put('/api/orders/:id/status', async (req, res) => {
+// ✅ Final update order delivery status endpoint
+app.put('/api/orders/:id/delivery-status', async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { delivery_status, delivery_notes } = req.body;
 
   try {
-    const query = 'UPDATE orders SET delivery_status = $1 WHERE id = $2 RETURNING *';
-    const values = [status, id];
+    const query = `
+      UPDATE orders 
+      SET delivery_status = $1, delivery_notes = $2, updated_at = CURRENT_TIMESTAMP 
+      WHERE id = $3 
+      RETURNING *
+    `;
+    const values = [delivery_status, delivery_notes, id];
     
     const result = await pool.query(query, values);
     
@@ -300,17 +404,60 @@ app.put('/api/orders/:id/status', async (req, res) => {
     
     res.json({ 
       success: true, 
-      message: 'Order status updated successfully',
+      message: 'Delivery status updated successfully',
       order: result.rows[0]
     });
   } catch (error) {
     console.error('Database error:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'Error updating order status' 
+      message: 'Error updating delivery status' 
     });
   }
 });
 
-// Start the server
+// ✅ Final get orders endpoint
+app.get('/api/orders', async (req, res) => {
+  try {
+    const { status, delivery_status, user_phone } = req.query;
+    
+    let query = 'SELECT * FROM orders WHERE 1=1';
+    const values = [];
+    let paramCount = 0;
+    
+    if (status && status !== 'all') {
+      paramCount++;
+      query += ` AND status = $${paramCount}`;
+      values.push(status);
+    }
+    
+    if (delivery_status && delivery_status !== 'all') {
+      paramCount++;
+      query += ` AND delivery_status = $${paramCount}`;
+      values.push(delivery_status);
+    }
+    
+    if (user_phone) {
+      paramCount++;
+      query += ` AND user_phone = $${paramCount}`;
+      values.push(user_phone);
+    }
+    
+    query += ' ORDER BY created_at DESC';
+    
+    const result = await pool.query(query, values);
+    
+    res.json({
+      success: true,
+      orders: result.rows
+    });
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching orders' 
+    });
+  }
+});
+
 startServer();

@@ -312,41 +312,42 @@
         
         // Razorpay options with UPI enhancements
         const options = {
-            "key": "rzp_test_RAk5UJb0IvStj9", // Replace with your Razorpay Key ID
+            "key": "rzp_live_REXvGvPZ8PAw1G", // Replace with your Razorpay Key ID
             "amount": amount ? (parseFloat(amount) * 100).toString() : "0", // Amount in paise
             "currency": "INR",
             "name": "Study Lane Library",
             "description": "Library Services Payment",
             "image": "https://example.com/your_logo", // Add your logo URL
-            "handler": function (response) {
-                // This function will be called after successful payment
-                document.getElementById('processing').style.display = 'none';
-                document.getElementById('paymentStatus').textContent = "Payment successful! Payment ID: " + response.razorpay_payment_id;
-                document.getElementById('paymentStatus').className = "payment-status success";
-                document.getElementById('paymentStatus').style.display = "block";
-                document.getElementById('backButton').style.display = "block";
-                
-                // Record payment in database
-                const paymentData = {
-                    payment_id: response.razorpay_payment_id,
-                    amount: amount,
-                    currency: "INR",
-                    status: "success",
-                    user_name: userName || "Guest",
-                    user_email: "",
-                    user_phone: userPhone || "",
-                    seat: userSeat || "Not assigned",
-                    cart: cartData || "No items",
-                    timestamp: new Date().toISOString()
-                };
-                
-                recordPayment(paymentData);
-                
-                // Redirect to success page after a delay
-                setTimeout(function() {
-                    window.location.href = "service.html?payment=success&id=" + response.razorpay_payment_id;
-                }, 3000);
-            },
+            // In the Razorpay handler function:
+"handler": function (response) {
+    // This function will be called after successful payment
+    document.getElementById('processing').style.display = 'none';
+    document.getElementById('paymentStatus').textContent = "Payment successful! Payment ID: " + response.razorpay_payment_id;
+    document.getElementById('paymentStatus').className = "payment-status success";
+    document.getElementById('paymentStatus').style.display = "block";
+    document.getElementById('backButton').style.display = "block";
+    
+    // Record payment in database
+    const paymentData = {
+        payment_id: response.razorpay_payment_id,
+        razorpay_order_id: response.razorpay_order_id, // Add this line
+        amount: amount,
+        currency: "INR",
+        status: "success",
+        user_name: userName || "Guest",
+        user_phone: userPhone || "",
+        seat: userSeat || "Not assigned",
+        cart: cartData || "No items",
+        timestamp: new Date().toISOString()
+    };
+    
+    recordPayment(paymentData);
+    
+    // Redirect to success page after a delay
+    setTimeout(function() {
+        window.location.href = "service.html?payment=success&id=" + response.razorpay_payment_id;
+    }, 3000);
+},
             "prefill": {
                 "name": userName || "Guest",
                 "email": "",

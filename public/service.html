@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Lane Library - Service Page</title>
+    <title>Study Lane Library - Services</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -110,37 +110,6 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-        }
-        
-        .user-profile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            position: relative;
-        }
-        
-        .user-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #0593FE;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-        
-        .user-name {
-            color: #223462;
-            font-weight: 600;
-            font-size: 14px;
-            max-width: 80px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
         
         .welcome-banner {
@@ -346,13 +315,16 @@
             font-weight: 600;
             padding: 5px 10px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .footer-links a:hover {
             text-decoration: underline;
         }
         
-        /* QR Code Modal */
+        /* User Details Modal */
         .modal {
             display: none;
             position: fixed;
@@ -370,21 +342,18 @@
             background-color: white;
             padding: 30px;
             border-radius: 15px;
-            text-align: center;
-            max-width: 400px;
+            text-align: left;
+            max-width: 450px;
             width: 90%;
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .modal-title {
             color: #223462;
             margin-bottom: 20px;
-        }
-        
-        #qrcode {
-            margin: 20px auto;
-            display: flex;
-            justify-content: center;
+            text-align: center;
         }
         
         .modal-close {
@@ -411,78 +380,17 @@
             cursor: pointer;
             font-weight: 600;
             margin-top: 20px;
+            width: 100%;
         }
         
         .modal-btn:hover {
             background-color: #0480d4;
         }
         
-        /* User Profile Modal */
-        .user-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .user-modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 300px;
-            width: 90%;
-            position: relative;
-        }
-        
-        .user-details {
-            margin-bottom: 20px;
-        }
-        
-        .user-detail {
-            margin-bottom: 10px;
-            color: #223462;
-        }
-        
-        .logout-btn {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-        }
-        
-        .logout-btn:hover {
-            background-color: #c0392b;
-        }
-        
-        /* Feedback Modal */
-        .feedback-modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: left;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-        }
-        
-        .feedback-form {
-            margin-top: 20px;
-        }
-        
+        /* Form Styles */
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
         
         .form-group label {
@@ -492,36 +400,48 @@
             color: #223462;
         }
         
-        .form-group textarea {
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 35px;
+            color: #707070;
+            font-size: 18px;
+        }
+        
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            padding: 15px;
+            padding: 12px 15px 12px 45px;
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
-            min-height: 150px;
-            resize: vertical;
+            transition: all 0.3s;
         }
         
-        .form-group textarea:focus {
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             border-color: #0593FE;
             outline: none;
             box-shadow: 0 0 0 3px rgba(5, 147, 254, 0.2);
         }
         
-        .submit-feedback-btn {
-            background-color: #0593FE;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
         }
         
-        .submit-feedback-btn:hover {
-            background-color: #0480d4;
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 6px;
+            display: none;
+        }
+        
+        .seat-info {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0593FE;
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-size: 14px;
         }
         
         /* Cart Modal */
@@ -568,6 +488,185 @@
             color: #223462;
         }
         
+        /* Feedback Options */
+        .feedback-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .feedback-option {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feedback-option:hover {
+            border-color: #0593FE;
+            background-color: #f0f8ff;
+        }
+        
+        .feedback-option.selected {
+            border-color: #0593FE;
+            background-color: #e6f2ff;
+        }
+        
+        .feedback-option i {
+            font-size: 20px;
+            color: #0593FE;
+        }
+        
+        /* Info Content */
+        .info-content {
+            line-height: 1.6;
+        }
+        
+        .info-content h3 {
+            color: #223462;
+            margin-bottom: 15px;
+        }
+        
+        .info-content p {
+            margin-bottom: 15px;
+        }
+        
+        /* Custom Alert Styles */
+        .custom-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1100;
+            transform: translateX(120%);
+            transition: transform 0.3s ease-out;
+            max-width: 350px;
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .custom-alert.error {
+            border-left-color: #e74c3c;
+        }
+        
+        .custom-alert.warning {
+            border-left-color: #FFB92C;
+        }
+        
+        .custom-alert.info {
+            border-left-color: #0593FE;
+        }
+        
+        .custom-alert.show {
+            transform: translateX(0);
+        }
+        
+        .alert-icon {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+        
+        .custom-alert.error .alert-icon {
+            color: #e74c3c;
+        }
+        
+        .custom-alert.warning .alert-icon {
+            color: #FFB92C;
+        }
+        
+        .custom-alert.info .alert-icon {
+            color: #0593FE;
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-title {
+            font-weight: 600;
+            color: #223462;
+            margin-bottom: 5px;
+        }
+        
+        .alert-message {
+            color: #707070;
+            font-size: 14px;
+        }
+        
+        .alert-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #707070;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .alert-close:hover {
+            color: #223462;
+        }
+        
+        /* Enhanced Complaint UI */
+        .complaint-category {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .complaint-option {
+            padding: 15px 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+        
+        .complaint-option:hover {
+            border-color: #0593FE;
+            background-color: #f0f8ff;
+            transform: translateY(-3px);
+        }
+        
+        .complaint-option.selected {
+            border-color: #0593FE;
+            background-color: #e6f2ff;
+            box-shadow: 0 5px 15px rgba(5, 147, 254, 0.2);
+        }
+        
+        .complaint-option i {
+            font-size: 24px;
+            color: #0593FE;
+            margin-bottom: 8px;
+        }
+        
+        .complaint-option span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #223462;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             header {
@@ -598,6 +697,40 @@
             .footer-links {
                 flex-direction: column;
                 gap: 10px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .feedback-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .custom-alert {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+            
+            /* Enhanced mobile complaint UI */
+            .complaint-category {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .complaint-option {
+                padding: 12px 8px;
+                min-height: 90px;
+            }
+            
+            .complaint-option i {
+                font-size: 20px;
+            }
+            
+            .complaint-option span {
+                font-size: 12px;
             }
         }
         
@@ -633,6 +766,38 @@
                 flex-direction: column;
                 gap: 15px;
             }
+            
+            .footer-links a {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .form-group input, .form-group textarea, .form-group select {
+                padding: 12px 12px 12px 40px;
+            }
+            
+            .form-group i {
+                left: 12px;
+                top: 37px;
+            }
+            
+            /* Further enhanced mobile complaint UI */
+            .complaint-category {
+                grid-template-columns: 1fr;
+            }
+            
+            .complaint-option {
+                flex-direction: row;
+                text-align: left;
+                padding: 15px;
+                min-height: auto;
+            }
+            
+            .complaint-option i {
+                margin-bottom: 0;
+                margin-right: 10px;
+                font-size: 22px;
+            }
         }
     </style>
 </head>
@@ -652,69 +817,66 @@
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count" id="cartCount">0</span>
                 </div>
-                <div class="user-profile" id="userProfile">
-                    <div class="user-icon">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-name" id="userName">Guest</div>
-                </div>
             </div>
         </header>
         
         <div class="welcome-banner">
-            <div class="welcome-message" id="welcomeMessage">Welcome back, Guest!</div>
+            <div class="welcome-message">Welcome to Study Lane Library Services</div>
         </div>
         
-        <div class="services-container">
-            <div class="service-card">
-                <div class="service-icon">
-                    <i class="fas fa-list"></i>
-                </div>
-                <h2 class="service-title">Library Services</h2>
-                <p class="service-description">Select from our available services to enhance your study experience. We offer beverages, stationery, and printing services delivered right to your seat.</p>
-                
-                <div id="servicesList">
-                    <div class="service-option" data-service="beverage">
-                        <div class="service-option-title">
-                            <span><i class="fas fa-coffee"></i> Tea/Coffee Service</span>
-                            <span>Starting at ₹10</span>
-                        </div>
-                        <div class="service-option-desc">Order hot beverages delivered to your seat. Perfect for long study sessions.</div>
-                    </div>
-                    
-                    <div class="service-option" data-service="stationary">
-                        <div class="service-option-title">
-                            <span><i class="fas fa-pencil-alt"></i> Stationary Service</span>
-                            <span>Starting at ₹5</span>
-                        </div>
-                        <div class="service-option-desc">Get writing materials and paper. Never run out of supplies during your study time.</div>
-                    </div>
-                    
-                    <div class="service-option" data-service="printer">
-                        <div class="service-option-title">
-                            <span><i class="fas fa-print"></i> Printer Service</span>
-                            <span>₹1 per page</span>
-                        </div>
-                        <div class="service-option-desc">Print your documents with our high-quality printers. Multiple file formats supported.</div>
-                    </div>
-                </div>
-                
-                <div id="serviceDetail" style="display: none;">
-                    <!-- This will be populated dynamically based on service selection -->
-                </div>
+        <div class="services-container" id="servicesContainer">
+            <!-- Services will be loaded dynamically from the database -->
+            <div class="loading-spinner" style="text-align: center; padding: 30px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: white;"></i>
+                <p style="color: white; margin-top: 15px;">Loading services...</p>
             </div>
         </div>
         
         <footer>
             <p>Study Lane Library &copy; 2023. All rights reserved.</p>
             <div class="footer-links">
-                <a href="#">About Us</a>
-                <a href="#">Contact</a>
-                <a href="#" id="feedbackLink">Feedback</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
+                <a href="#" id="aboutLink"><i class="fas fa-info-circle"></i> About Us</a>
+                <a href="#" id="contactLink"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="#" id="privacyLink"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+                <a href="#" id="termsLink"><i class="fas fa-file-contract"></i> Terms of Service</a>
+                <a href="#" id="feedbackLink"><i class="fas fa-comment-dots"></i> Feedback</a>
+                <a href="#" id="complaintLink"><i class="fas fa-exclamation-circle"></i> Complaint</a>
             </div>
         </footer>
+    </div>
+
+    <!-- Custom Alert Container -->
+    <div id="customAlertContainer"></div>
+
+    <!-- User Details Modal -->
+    <div class="modal" id="userDetailsModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeUserDetailsModal()">&times;</button>
+            <h2 class="modal-title">Enter Your Details</h2>
+            <form id="userDetailsForm">
+                <div class="form-group">
+                    <label for="userName">Name</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="userName" name="name" required placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="userPhone">Phone Number</label>
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="userPhone" name="phone" required placeholder="Enter your phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="userSeat">Seat Number</label>
+                    <i class="fas fa-chair"></i>
+                    <input type="number" id="userSeat" name="seat" required placeholder="Enter your seat number (1-250)" min="1" max="250">
+                    <div class="error-message" id="seat-error">Invalid seat number! Please enter a number between 1-250.</div>
+                    <div class="seat-info">Seat numbers range from 1 to 250. Study carrels are on the 2nd floor.</div>
+                </div>
+                
+                <button type="submit" class="modal-btn">Proceed to Payment</button>
+            </form>
+        </div>
     </div>
 
     <!-- Cart Modal -->
@@ -729,194 +891,262 @@
         </div>
     </div>
 
-    <!-- QR Code Modal -->
-    <div class="modal" id="qrModal">
+    <!-- About Us Modal -->
+    <div class="modal" id="aboutModal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">&times;</button>
-            <h2 class="modal-title">Scan to Pay</h2>
-            <p>Scan this QR code with your UPI app to complete your payment</p>
-            <div id="qrcode"></div>
-            <p>Total Amount: ₹<span id="modalTotal">0.00</span></p>
-            <p>UPI ID: himanshusinghrajput7866-1@okhdfcbank</p>
-            <button class="modal-btn" onclick="closeModal()">Close</button>
+            <button class="modal-close" onclick="closeModal('aboutModal')">&times;</button>
+            <h2 class="modal-title">About Study Lane Library</h2>
+            <div class="info-content">
+                <p>Study Lane Library is a modern library dedicated to providing a comfortable and productive environment for students and researchers. Our mission is to support learning and academic excellence through our extensive collection of resources and state-of-the-art facilities.</p>
+                <p>Founded in 2010, we have grown to become one of the premier study destinations in the city, with over 250 comfortable seating options, high-speed internet, and a variety of study spaces to suit different learning styles.</p>
+                <p>Our services include beverage delivery, stationery supplies, and printing services to enhance your study experience without interruptions.</p>
+            </div>
         </div>
     </div>
 
-    <!-- User Profile Modal -->
-    <div class="user-modal" id="userModal">
-        <div class="user-modal-content">
-            <button class="modal-close" onclick="closeUserModal()">&times;</button>
-            <h2 class="modal-title">User Profile</h2>
-            <div class="user-details">
-                <div class="user-detail" id="profileUserName">Name: Guest</div>
-                <div class="user-detail" id="profileSeatInfo">Seat: Not assigned</div>
+    <!-- Contact Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('contactModal')">&times;</button>
+            <h2 class="modal-title">Contact Us</h2>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="contactName">Your Name</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="contactName" name="name" required placeholder="Enter your name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactPhone">Phone Number</label>
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="contactPhone" name="phone" required placeholder="Enter your phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactMessage">Message</label>
+                    <i class="fas fa-comment"></i>
+                    <textarea id="contactMessage" name="message" required placeholder="How can we help you?"></textarea>
+                </div>
+                
+                <button type="submit" class="modal-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal" id="privacyModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('privacyModal')">&times;</button>
+            <h2 class="modal-title">Privacy Policy</h2>
+            <div class="info-content">
+                <h3>1. Information We Collect</h3>
+                <p>We collect information you provide directly to us, such as when you create an account, use our services, or contact us. This may include your name, phone number, seat number, and payment information.</p>
+                
+                <h3>2. How We Use Your Information</h3>
+                <p>We use the information we collect to provide, maintain, and improve our services, process transactions, send you technical notices and support messages, and respond to your comments and questions.</p>
+                
+                <h3>3. Information Sharing</h3>
+                <p>We do not sell, trade, or otherwise transfer your personal information to outside parties except to trusted third parties who assist us in operating our website, conducting our business, or servicing you.</p>
+                
+                <h3>4. Data Security</h3>
+                <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.</p>
+                
+                <p>Last updated: January 2023</p>
             </div>
-            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="modal" id="termsModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('termsModal')">&times;</button>
+            <h2 class="modal-title">Terms of Service</h2>
+            <div class="info-content">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By accessing or using Study Lane Library services, you agree to be bound by these Terms of Service.</p>
+                
+                <h3>2. Use of Services</h3>
+                <p>You may use our services only for lawful purposes and in accordance with these Terms. You agree not to use our services:</p>
+                <ul>
+                    <li>In any way that violates any applicable law or regulation</li>
+                    <li>To engage in any conduct that restricts or inhibits anyone's use of the library</li>
+                    <li>To attempt to interfere with the proper working of our services</li>
+                </ul>
+                
+                <h3>3. Account Registration</h3>
+                <p>You may be required to provide certain information to access some features of our services. You agree that all information you provide is accurate and current.</p>
+                
+                <h3>4. Payments</h3>
+                <p>All payments for services are processed through secure payment gateways. By making a purchase, you agree to pay all charges incurred by your account.</p>
+                
+                <h3>5. Changes to Terms</h3>
+                <p>We may modify these Terms at any time. We will provide notice of significant changes through our website or by email.</p>
+            </div>
         </div>
     </div>
 
     <!-- Feedback Modal -->
     <div class="modal" id="feedbackModal">
-        <div class="feedback-modal-content">
-            <button class="modal-close" onclick="closeFeedbackModal()">&times;</button>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('feedbackModal')">&times;</button>
             <h2 class="modal-title">Feedback</h2>
-            <p class="service-description">We value your opinion. Please share your experience or suggestions to help us improve our services. Your feedback helps us serve you better.</p>
-            
-            <form class="feedback-form" id="feedbackForm">
+            <form id="feedbackForm">
                 <div class="form-group">
-                    <label for="feedback">Your Feedback:</label>
-                    <textarea id="feedback" name="feedback" placeholder="Please share your thoughts about our library services..." required></textarea>
+                    <label for="feedbackName">Your Name</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="feedbackName" name="name" required placeholder="Enter your name">
                 </div>
-                <button type="submit" class="submit-feedback-btn">Submit Feedback</button>
+                
+                <div class="form-group">
+                    <label for="feedbackSeat">Seat Number (Optional)</label>
+                    <i class="fas fa-chair"></i>
+                    <input type="number" id="feedbackSeat" name="seat" placeholder="Enter your seat number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="feedbackMessage">Your Feedback</label>
+                    <i class="fas fa-comment"></i>
+                    <textarea id="feedbackMessage" name="feedback" required placeholder="Please share your thoughts about our library services..."></textarea>
+                </div>
+                
+                <button type="submit" class="modal-btn">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Complaint Modal - Enhanced for Mobile -->
+    <div class="modal" id="complaintModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('complaintModal')">&times;</button>
+            <h2 class="modal-title">Submit a Complaint</h2>
+            <form id="complaintForm">
+                <div class="form-group">
+                    <label for="complaintName">Your Name</label>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="complaintName" name="name" required placeholder="Enter your name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="complaintSeat">Seat Number (Optional)</label>
+                    <i class="fas fa-chair"></i>
+                    <input type="number" id="complaintSeat" name="seat" placeholder="Enter your seat number">
+                </div>
+                
+                <div class="form-group">
+                    <label>Select Complaint Type</label>
+                    <div class="complaint-category">
+                        <div class="complaint-option" data-value="seat-not-clean">
+                            <i class="fas fa-couch"></i>
+                            <span>Seat not clean</span>
+                        </div>
+                        <div class="complaint-option" data-value="noise">
+                            <i class="fas fa-volume-up"></i>
+                            <span>Noise disturbance</span>
+                        </div>
+                        <div class="complaint-option" data-value="bathroom">
+                            <i class="fas fa-restroom"></i>
+                            <span>Bathroom issues</span>
+                        </div>
+                        <div class="complaint-option" data-value="water">
+                            <i class="fas fa-tint"></i>
+                            <span>Water problem</span>
+                        </div>
+                        <div class="complaint-option" data-value="temperature">
+                            <i class="fas fa-thermometer-half"></i>
+                            <span>Temperature issue</span>
+                        </div>
+                        <div class="complaint-option" data-value="wifi">
+                            <i class="fas fa-wifi"></i>
+                            <span>Wi-Fi problem</span>
+                        </div>
+                        <div class="complaint-option" data-value="lighting">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Lighting issue</span>
+                        </div>
+                        <div class="complaint-option" data-value="other">
+                            <i class="fas fa-ellipsis-h"></i>
+                            <span>Other issue</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="complaintType" name="type" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="complaintDetails">Additional Details</label>
+                    <i class="fas fa-comment"></i>
+                    <textarea id="complaintDetails" name="details" required placeholder="Please describe your complaint in detail..."></textarea>
+                </div>
+                
+                <button type="submit" class="modal-btn">Submit Complaint</button>
             </form>
         </div>
     </div>
 
     <script>
-        // Service data with prices in Rupees
-        const services = {
-            beverage: [
-                { name: 'Tea', price: 10 },
-                { name: 'Coffee', price: 20 }
-            ],
-            stationary: [
-                { name: 'Pen', price: 15 },
-                { name: 'Paper (per sheet)', price: 2 }
-            ],
-            printer: [
-                { name: 'Print Document', price: 1 } // per page
-            ]
-        };
+        // Service data will be loaded from the database
+        let servicesData = [];
         
         // Cart to store selected items
         let cart = [];
         let printedFiles = [];
         
-        // Check if user is logged in
+        // Set up event listeners
         window.addEventListener('DOMContentLoaded', function() {
-            const userName = sessionStorage.getItem('userName');
-            const userSeat = sessionStorage.getItem('userSeat');
+            // Load services from the server
+            loadServices();
             
-            if (!userName || !userSeat) {
-                alert('Please login first');
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            // Display user information
-            document.getElementById('welcomeMessage').textContent = `Welcome back, ${userName}!`;
-            document.getElementById('userName').textContent = userName;
-            document.getElementById('profileUserName').textContent = `Name: ${userName}`;
-            document.getElementById('profileSeatInfo').textContent = `Seat: ${userSeat}`;
-            
-            // Set up event listeners
             setupEventListeners();
         });
         
-        // Set up event listeners
-        function setupEventListeners() {
-            // Service option clicks
-            document.querySelectorAll('.service-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const serviceType = this.getAttribute('data-service');
-                    showServiceDetail(serviceType);
-                });
-            });
-            
-            // Cart icon click
-            document.getElementById('cartIcon').addEventListener('click', function() {
-                showCartModal();
-            });
-            
-            // Place order button
-            document.getElementById('placeOrderBtn').addEventListener('click', function() {
-                if (cart.length === 0) {
-                    alert('Your cart is empty!');
-                    return;
-                }
-                proceedToPayment();
-            });
-            
-            // Continue shopping button
-            document.getElementById('continueShoppingBtn').addEventListener('click', function() {
-                closeCartModal();
-            });
-            
-            // User profile click
-            document.getElementById('userProfile').addEventListener('click', function() {
-                document.getElementById('userModal').style.display = 'flex';
-            });
-            
-            // Feedback link click
-            document.getElementById('feedbackLink').addEventListener('click', function(e) {
-                e.preventDefault();
-                document.getElementById('feedbackModal').style.display = 'flex';
-            });
-            
-            // Feedback form submission
-            document.getElementById('feedbackForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                
-                const feedbackText = document.getElementById('feedback').value;
-                const userName = sessionStorage.getItem('userName');
-                const userSeat = sessionStorage.getItem('userSeat');
-                
-                // Send feedback to server
-                fetch('/feedback', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: userName,
-                        seat: userSeat,
-                        feedback: feedbackText
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Thank you for your feedback! We appreciate your input.');
-                        document.getElementById('feedback').value = '';
-                        closeFeedbackModal();
-                    } else {
-                        alert('Error submitting feedback. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error submitting feedback. Please try again.');
-                });
-            });
-        }
+        // Load services from the server (dynamic from DB)
+function loadServices() {
+    fetch('/api/services')
+        .then(response => response.json())
+        .then(data => {
+            servicesData = data; // assign API response
+            renderServices();
+        })
+        .catch(error => {
+            console.error('Error fetching services:', error);
+            const servicesContainer = document.getElementById('servicesContainer');
+            servicesContainer.innerHTML = `
+                <p style="color: white; text-align: center;">Error loading services. Please try again later.</p>
+            `;
+        });
+}
+
         
-        // Show service detail view
-        function showServiceDetail(serviceType) {
-            // Hide services list
-            document.getElementById('servicesList').style.display = 'none';
+        // Render services from the loaded data
+        function renderServices() {
+            const servicesContainer = document.getElementById('servicesContainer');
             
-            // Generate service detail HTML
-            let detailHTML = `<h3>${serviceType.charAt(0).toUpperCase() + serviceType.slice(1)} Service</h3>`;
+            if (servicesData.length === 0) {
+                servicesContainer.innerHTML = '<p style="color: white; text-align: center;">No services available at the moment.</p>';
+                return;
+            }
             
-            if (serviceType === 'printer') {
-                // Special handling for printer service
-                detailHTML += `
-                    <p>Select documents to print (₹1 per page)</p>
-                    <input type="file" id="printFileInput" class="print-file-input" multiple accept=".pdf,.doc,.docx,.txt">
-                    <button class="service-btn" id="selectPrintFileBtn" style="margin-top: 15px;">
-                        <i class="fas fa-file-upload"></i> Select Documents to Print
-                    </button>
-                    <div id="printFileList" class="print-file-list"></div>
+            let servicesHTML = '';
+            
+            servicesData.forEach(service => {
+                servicesHTML += `
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas ${service.icon}"></i>
+                        </div>
+                        <h2 class="service-title">${service.name}</h2>
+                        <p class="service-description">${service.description}</p>
+                        
+                        <div class="service-options">
                 `;
-            } else {
-                // For beverage and stationary services
-                services[serviceType].forEach(item => {
-                    detailHTML += `
-                        <div class="service-option">
+                
+                service.items.forEach(item => {
+                    servicesHTML += `
+                        <div class="service-option" data-service="${service.id}" data-item="${item.id}">
                             <div class="service-option-title">
                                 <span>${item.name}</span>
                                 <span>₹${item.price}</span>
                             </div>
+                            <div class="service-option-desc">${item.description}</div>
                             <div class="item-controls" data-item="${item.name}" data-price="${item.price}">
                                 <div class="quantity-controls">
                                     <button class="quantity-btn decrease-btn">-</button>
@@ -930,102 +1160,309 @@
                         </div>
                     `;
                 });
-            }
-            
-            // Add back button
-            detailHTML += `<button class="back-to-services" id="backToServices" style="display: block; margin-top: 20px;">Go back to services</button>`;
-            
-            // Update the detail view
-            document.getElementById('serviceDetail').innerHTML = detailHTML;
-            document.getElementById('serviceDetail').style.display = 'block';
-            
-            // Set up event listeners for the dynamic content
-            if (serviceType === 'printer') {
-                document.getElementById('selectPrintFileBtn').addEventListener('click', function() {
-                    document.getElementById('printFileInput').click();
-                });
                 
-                document.getElementById('printFileInput').addEventListener('change', function(e) {
-                    handlePrintFileSelection(e.target.files);
-                });
-            } else {
-                // Set up quantity controls
-                document.querySelectorAll('.increase-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const valueElement = this.parentElement.querySelector('.quantity-value');
-                        valueElement.textContent = parseInt(valueElement.textContent) + 1;
-                    });
-                });
-                
-                document.querySelectorAll('.decrease-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const valueElement = this.parentElement.querySelector('.quantity-value');
-                        const currentValue = parseInt(valueElement.textContent);
-                        if (currentValue > 0) {
-                            valueElement.textContent = currentValue - 1;
-                        }
-                    });
-                });
-                
-                // Set up add to cart buttons
-                document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const controls = this.parentElement;
-                        const itemName = controls.getAttribute('data-item');
-                        const itemPrice = parseFloat(controls.getAttribute('data-price'));
-                        const quantity = parseInt(controls.querySelector('.quantity-value').textContent);
+                servicesHTML += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            servicesContainer.innerHTML = servicesHTML;
+            
+            // Set up event listeners for the newly rendered content
+            setupServiceEventListeners();
+        }
+        
+        // Set up event listeners for services
+        function setupServiceEventListeners() {
+            // Add to cart buttons
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const controls = this.parentElement;
+                    const itemName = controls.getAttribute('data-item');
+                    const itemPrice = parseFloat(controls.getAttribute('data-price'));
+                    const quantity = parseInt(controls.querySelector('.quantity-value').textContent);
+                    
+                    if (quantity > 0) {
+                        addToCart(itemName, itemPrice, quantity);
+                        controls.querySelector('.quantity-value').textContent = '0';
                         
-                        if (quantity > 0) {
-                            addToCart(itemName, itemPrice, quantity);
-                            controls.querySelector('.quantity-value').textContent = '0';
-                            alert(`${quantity} ${itemName}(s) added to cart!`);
-                        }
-                    });
+                        // Use custom alert instead of browser alert
+                        showCustomAlert('success', 'Item Added', `${quantity} ${itemName.toLowerCase()} added successfully`);
+                    }
                 });
-            }
+            });
             
-            // Back to services button
-            document.getElementById('backToServices').addEventListener('click', function() {
-                document.getElementById('serviceDetail').style.display = 'none';
-                document.getElementById('servicesList').style.display = 'block';
+            // Quantity controls
+            document.querySelectorAll('.increase-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const valueElement = this.parentElement.querySelector('.quantity-value');
+                    valueElement.textContent = parseInt(valueElement.textContent) + 1;
+                });
+            });
+            
+            document.querySelectorAll('.decrease-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const valueElement = this.parentElement.querySelector('.quantity-value');
+                    const currentValue = parseInt(valueElement.textContent);
+                    if (currentValue > 0) {
+                        valueElement.textContent = currentValue - 1;
+                    }
+                });
             });
             
             // Show item controls on service option click
-            if (serviceType !== 'printer') {
-                document.querySelectorAll('.service-option').forEach(option => {
-                    option.addEventListener('click', function(e) {
-                        if (!e.target.closest('.item-controls')) {
-                            const controls = this.querySelector('.item-controls');
-                            controls.style.display = controls.style.display === 'flex' ? 'none' : 'flex';
-                        }
-                    });
+            document.querySelectorAll('.service-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    if (!e.target.closest('.item-controls')) {
+                        const controls = this.querySelector('.item-controls');
+                        controls.style.display = controls.style.display === 'flex' ? 'none' : 'flex';
+                    }
                 });
-            }
+            });
         }
         
-        // Handle print file selection
-        function handlePrintFileSelection(files) {
-            if (files.length > 0) {
-                const fileList = document.getElementById('printFileList');
-                fileList.innerHTML = '';
+        // Custom alert function
+        function showCustomAlert(type, title, message) {
+            const alertContainer = document.getElementById('customAlertContainer');
+            
+            // Determine icon and alert class based on type
+            let iconClass, alertClass;
+            switch(type) {
+                case 'success':
+                    iconClass = 'fa-check-circle';
+                    alertClass = '';
+                    break;
+                case 'error':
+                    iconClass = 'fa-exclamation-circle';
+                    alertClass = 'error';
+                    break;
+                case 'warning':
+                    iconClass = 'fa-exclamation-triangle';
+                    alertClass = 'warning';
+                    break;
+                case 'info':
+                    iconClass = 'fa-info-circle';
+                    alertClass = 'info';
+                    break;
+                default:
+                    iconClass = 'fa-info-circle';
+                    alertClass = 'info';
+            }
+            
+            // Create alert element
+            const alertElement = document.createElement('div');
+            alertElement.className = `custom-alert ${alertClass}`;
+            alertElement.innerHTML = `
+                <i class="fas ${iconClass} alert-icon"></i>
+                <div class="alert-content">
+                    <div class="alert-title">${title}</div>
+                    <div class="alert-message">${message}</div>
+                </div>
+                <button class="alert-close">&times;</button>
+            `;
+            
+            // Add to container
+            alertContainer.appendChild(alertElement);
+            
+            // Show alert with animation
+            setTimeout(() => {
+                alertElement.classList.add('show');
+            }, 10);
+            
+            // Set up close button
+            const closeButton = alertElement.querySelector('.alert-close');
+            closeButton.addEventListener('click', () => {
+                alertElement.classList.remove('show');
+                setTimeout(() => {
+                    alertElement.remove();
+                }, 300);
+            });
+            
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                if (alertElement.parentNode) {
+                    alertElement.classList.remove('show');
+                    setTimeout(() => {
+                        alertElement.remove();
+                    }, 300);
+                }
+            }, 4000);
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Cart icon click
+            document.getElementById('cartIcon').addEventListener('click', function() {
+                showCartModal();
+            });
+            
+            // Place order button
+            document.getElementById('placeOrderBtn').addEventListener('click', function() {
+                if (cart.length === 0) {
+                    showCustomAlert('warning', 'Empty Cart', 'Your cart is empty!');
+                    return;
+                }
+                showUserDetailsModal();
+            });
+            
+            // Continue shopping button
+            document.getElementById('continueShoppingBtn').addEventListener('click', function() {
+                closeCartModal();
+            });
+            
+            // User details form submission
+            document.getElementById('userDetailsForm').addEventListener('submit', function(event) {
+                event.preventDefault();
                 
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    printedFiles.push(file);
-                    
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'print-file-item';
-                    fileItem.innerHTML = `
-                        <span>${file.name}</span>
-                        <span>${(file.size / 1024).toFixed(2)} KB</span>
-                    `;
-                    fileList.appendChild(fileItem);
-                    
-                    // Add to cart (assuming 1 page per file for simplicity)
-                    addToCart('Print Document', 1, 1, file.name);
+                const name = document.getElementById('userName').value.trim();
+                const phone = document.getElementById('userPhone').value.trim();
+                const seat = document.getElementById('userSeat').value.trim();
+                
+                // Validate inputs
+                if (!validateUserDetails(name, phone, seat)) {
+                    return;
                 }
                 
-                alert(`${files.length} document(s) added for printing!`);
+                // Proceed to payment
+                proceedToPayment(name, phone, seat);
+            });
+            
+            // Seat number validation
+            document.getElementById('userSeat').addEventListener('input', validateSeat);
+            
+            // Footer links
+            document.getElementById('aboutLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showModal('aboutModal');
+            });
+            
+            document.getElementById('contactLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showModal('contactModal');
+            });
+            
+            document.getElementById('privacyLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showModal('privacyModal');
+            });
+            
+            document.getElementById('termsLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showModal('termsModal');
+            });
+            
+            document.getElementById('feedbackLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showModal('feedbackModal');
+            });
+            
+            document.getElementById('complaintLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showModal('complaintModal');
+            });
+            
+            // Contact form submission
+            document.getElementById('contactForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const name = document.getElementById('contactName').value.trim();
+                const phone = document.getElementById('contactPhone').value.trim();
+                const message = document.getElementById('contactMessage').value.trim();
+                
+                if (name === '' || phone === '' || message === '') {
+                    showCustomAlert('error', 'Error', 'Please fill all fields');
+                    return;
+                }
+                
+                // Submit contact form (would typically send to server)
+                submitContactForm(name, phone, message);
+            });
+            
+            // Feedback form submission
+            document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const name = document.getElementById('feedbackName').value.trim();
+                const seat = document.getElementById('feedbackSeat').value.trim();
+                const feedback = document.getElementById('feedbackMessage').value.trim();
+                
+                if (name === '' || feedback === '') {
+                    showCustomAlert('error', 'Error', 'Please fill all required fields');
+                    return;
+                }
+                
+                // Submit feedback
+                submitFeedback(name, seat, feedback);
+            });
+            
+            // Complaint form submission
+            document.getElementById('complaintForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const name = document.getElementById('complaintName').value.trim();
+                const seat = document.getElementById('complaintSeat').value.trim();
+                const type = document.getElementById('complaintType').value;
+                const details = document.getElementById('complaintDetails').value.trim();
+                
+                if (name === '' || type === '' || details === '') {
+                    showCustomAlert('error', 'Error', 'Please fill all required fields');
+                    return;
+                }
+                
+                // Submit complaint
+                submitComplaint(name, seat, type, details);
+            });
+            
+            // Complaint option selection
+            document.querySelectorAll('.complaint-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.complaint-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    document.getElementById('complaintType').value = this.getAttribute('data-value');
+                });
+            });
+        }
+        
+        // Validate user details
+        function validateUserDetails(name, phone, seat) {
+            // Name validation
+            if (name === '') {
+                showCustomAlert('error', 'Error', 'Please enter your name');
+                return false;
+            }
+            
+            // Phone validation
+            if (phone === '') {
+                showCustomAlert('error', 'Error', 'Please enter your phone number');
+                return false;
+            }
+            
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+            if (!phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''))) {
+                showCustomAlert('error', 'Error', 'Please enter a valid phone number');
+                return false;
+            }
+            
+            // Seat validation
+            if (seat === '' || isNaN(seat) || seat < 1 || seat > 250) {
+                document.getElementById('seat-error').style.display = 'block';
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Validate seat number
+        function validateSeat() {
+            const seat = document.getElementById('userSeat').value;
+            
+            if (seat === '' || isNaN(seat) || seat < 1 || seat > 250) {
+                document.getElementById('seat-error').style.display = 'block';
+            } else {
+                document.getElementById('seat-error').style.display = 'none';
             }
         }
         
@@ -1127,15 +1564,33 @@
             document.getElementById('cartModal').style.display = 'none';
         }
         
+        // Show user details modal
+        function showUserDetailsModal() {
+            document.getElementById('userDetailsModal').style.display = 'flex';
+            closeCartModal();
+        }
+        
+        // Close user details modal
+        function closeUserDetailsModal() {
+            document.getElementById('userDetailsModal').style.display = 'none';
+        }
+        
+        // Show modal
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
         // Proceed to payment
-        function proceedToPayment() {
+        function proceedToPayment(name, phone, seat) {
             const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const userName = sessionStorage.getItem('userName');
-            const userSeat = sessionStorage.getItem('userSeat');
-            const userPhone = sessionStorage.getItem('userPhone');
             
             if (total === 0) {
-                alert('Your cart is empty!');
+                showCustomAlert('warning', 'Empty Cart', 'Your cart is empty!');
                 return;
             }
             
@@ -1143,31 +1598,88 @@
             const cartJSON = JSON.stringify(cart);
             
             // Redirect to payment page with parameters
-            window.location.href = `payment.html?amount=${total}&name=${userName}&seat=${userSeat}&phone=${userPhone}&cart=${encodeURIComponent(cartJSON)}`;
+            window.location.href = `payment.html?amount=${total}&name=${encodeURIComponent(name)}&seat=${seat}&phone=${phone}&cart=${encodeURIComponent(cartJSON)}`;
         }
         
-        // Close modal
-        function closeModal() {
-            document.getElementById('qrModal').style.display = 'none';
+        // Submit contact form to server
+        function submitContactForm(name, phone, message) {
+            fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, phone, message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showCustomAlert('success', 'Message Sent', 'Thank you for your message. We will get back to you soon!');
+                    closeModal('contactModal');
+                    document.getElementById('contactForm').reset();
+                } else {
+                    showCustomAlert('error', 'Error', 'There was a problem sending your message. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showCustomAlert('error', 'Error', 'There was a problem sending your message. Please try again.');
+            });
         }
         
-        // Close user modal
-        function closeUserModal() {
-            document.getElementById('userModal').style.display = 'none';
+        // Submit feedback to server
+        function submitFeedback(name, seat, feedback) {
+            fetch('/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, seat, feedback })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showCustomAlert('success', 'Feedback Submitted', 'Thank you for your feedback!');
+                    closeModal('feedbackModal');
+                    document.getElementById('feedbackForm').reset();
+                } else {
+                    showCustomAlert('error', 'Error', 'There was a problem submitting your feedback. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showCustomAlert('error', 'Error', 'There was a problem submitting your feedback. Please try again.');
+            });
         }
         
-        // Close feedback modal
-        function closeFeedbackModal() {
-            document.getElementById('feedbackModal').style.display = 'none';
-        }
-        
-        // Logout function
-        function logout() {
-            if(confirm('Are you sure you want to logout?')) {
-                sessionStorage.removeItem('userName');
-                sessionStorage.removeItem('userSeat');
-                window.location.href = 'index.html';
-            }
+        // Submit complaint to server
+        function submitComplaint(name, seat, type, details) {
+            fetch('/complaint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, seat, type, details })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showCustomAlert('success', 'Complaint Submitted', 'Thank you for your complaint. We will address it as soon as possible!');
+                    closeModal('complaintModal');
+                    document.getElementById('complaintForm').reset();
+                    
+                    // Reset selected complaint type
+                    document.querySelectorAll('.complaint-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    document.getElementById('complaintType').value = '';
+                } else {
+                    showCustomAlert('error', 'Error', 'There was a problem submitting your complaint. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showCustomAlert('error', 'Error', 'There was a problem submitting your complaint. Please try again.');
+            });
         }
     </script>
 </body>
