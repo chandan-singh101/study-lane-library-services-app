@@ -512,4 +512,10 @@ app.get('/api/orders', async (req, res) => {
   }
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).send("I am alive 🚀");
+});
+
+
 startServer();
