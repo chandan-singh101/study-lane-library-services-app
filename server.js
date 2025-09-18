@@ -232,12 +232,62 @@ app.get('/', (req, res) => {
 });
 
 // Get all services with their items
+// app.get('/api/services', async (req, res) => {
+//   try {
+//     const query = `
+//       SELECT 
+//         s.id, s.name, s.description, s.icon,
+//         si.id as item_id, si.name as item_name, si.price, si.description as item_description
+//       FROM services s
+//       LEFT JOIN service_items si ON s.id = si.service_id
+//       ORDER BY s.id, si.id
+//     `;
+    
+//     const result = await pool.query(query);
+
+//     // Group services and their items
+//     const services = [];
+//     let currentService = null;
+    
+//     result.rows.forEach(row => {
+//       if (!currentService || currentService.id !== row.id) {
+//         if (currentService) services.push(currentService);
+        
+//         currentService = {
+//           id: row.id,
+//           name: row.name,
+//           description: row.description,
+//           icon: row.icon,
+//           items: []
+//         };
+//       }
+      
+//       if (row.item_id) {
+//         currentService.items.push({
+//           id: row.item_id,
+//           name: row.item_name,
+//           price: row.price,
+//           description: row.item_description
+//         });
+//       }
+//     });
+    
+//     if (currentService) services.push(currentService);
+    
+//     res.json(services);
+//   } catch (error) {
+//     console.error('Database error:', error);
+//     res.status(500).json({ success: false, message: 'Error fetching services' });
+//   }
+// });
+
+// Get all services with their items including images
 app.get('/api/services', async (req, res) => {
   try {
     const query = `
       SELECT 
         s.id, s.name, s.description, s.icon,
-        si.id as item_id, si.name as item_name, si.price, si.description as item_description
+        si.id as item_id, si.name as item_name, si.price, si.description as item_description, si.image_url
       FROM services s
       LEFT JOIN service_items si ON s.id = si.service_id
       ORDER BY s.id, si.id
@@ -245,7 +295,6 @@ app.get('/api/services', async (req, res) => {
     
     const result = await pool.query(query);
 
-    // Group services and their items
     const services = [];
     let currentService = null;
     
@@ -267,7 +316,8 @@ app.get('/api/services', async (req, res) => {
           id: row.item_id,
           name: row.item_name,
           price: row.price,
-          description: row.item_description
+          description: row.item_description,
+          image_url: row.image_url
         });
       }
     });
@@ -280,6 +330,8 @@ app.get('/api/services', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error fetching services' });
   }
 });
+
+
 
 // Submit contact form
 app.post('/api/contact', async (req, res) => {
